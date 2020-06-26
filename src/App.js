@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import NumberInput from './components/NumberInput';
+import SelectInput from './components/SelectInput';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const process = useSelector(state => state);
+
+  useEffect(() => {
+    console.log(process.scheduler);
+  });
+
   return (
     <div className="App">
+      <NumberInput
+        placeholder="Quantidade de processos"
+        max={10}
+      />
     </div>
   );
-}
+};
 
 export default App;
