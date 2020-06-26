@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import NumberInput from './components/NumberInput';
+import Button from './components/Button';
 import SelectInput from './components/SelectInput';
 
 const App = () => {
@@ -16,6 +17,11 @@ const App = () => {
       <NumberInput
         placeholder="Quantidade de processos"
         max={10}
+      />
+      <Button
+        label="Enter"
+        type="primary"
+        size="md"
       />
     </div>
   );

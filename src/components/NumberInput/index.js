@@ -1,4 +1,5 @@
 import React from "react";
+import './style.css';
 
 const NumberInput = (props) => {
 	const { placeholder, name, id, role, max } = props;
