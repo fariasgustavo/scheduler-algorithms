@@ -8,6 +8,7 @@ export const { Types, Creators } = createActions({
 	addAlgorithm: ["payload"],
 	addQuantum: ["payload"],
 	addMaxTime: ["payload"],
+	addProcessQty: ["payload"]
 });
 
 /**
@@ -18,6 +19,7 @@ const INITIAL_STATE = {
 	algorithm: "",
 	quantum: null,
 	maxTime: null,
+	processQty: null
 };
 
 const addProcess = (state = INITIAL_STATE, action) => {
@@ -32,13 +34,17 @@ const addQuantum = (state = INITIAL_STATE, action) => {
 const addMaxTime = (state = INITIAL_STATE, action) => {
 	return { ...state, maxTime: action.payload };
 };
+const addProcessQty = (state = INITIAL_STATE, action) => {
+	return { ...state, processQty: action.payload };
+};
 
 /**
  * Reducer
  */
 export default createReducer(INITIAL_STATE, {
 	[Types.ADD_PROCESS]: addProcess,
-	[Types.ADD_PROCESS]: addAlgorithm,
-	[Types.ADD_PROCESS]: addQuantum,
-	[Types.ADD_PROCESS]: addMaxTime,
+	[Types.ADD_ALGORITHM]: addAlgorithm,
+	[Types.ADD_QUANTUM]: addQuantum,
+	[Types.ADD_MAX_TIME]: addMaxTime,
+	[Types.ADD_PROCESS_QTY]: addProcessQty,
 });

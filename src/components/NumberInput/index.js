@@ -2,7 +2,7 @@ import React from "react";
 import './style.css';
 
 const NumberInput = (props) => {
-	const { placeholder, name, id, role, max } = props;
+	const { placeholder, name, id, max, value, onInput } = props;
 
 	const handleOnChange = (value) => {};
 
@@ -13,6 +13,8 @@ const NumberInput = (props) => {
 			id={id}
 			name={name}
 			max={max}
+			value={value}
+			onInput={onInput}
 		/>
 	);
 };

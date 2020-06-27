@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ProcessContext from "./ProcessContext";
 
 const ProcessSelection = () => {
+	const processQty = useSelector((state) => state.scheduler.processQty);
+
+	useEffect(() => {
+		console.log(processQty);
+	}, [processQty]);
+
 	return (
 		<div className="container-process">
-			<ProcessContext />
+			<ProcessContext visibility={!!processQty} />
 		</div>
 	);
 };
