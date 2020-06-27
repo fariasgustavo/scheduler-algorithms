@@ -4,10 +4,10 @@ import ProcessContext from "./ProcessContext";
 
 const ProcessSelection = () => {
 	const processQty = useSelector((state) => state.scheduler.processQty);
-
+	
 	useEffect(() => {
 		console.log(processQty);
-	}, [processQty]);
+	});
 
 	return (
 		<div className="container-process">

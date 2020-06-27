@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 };
 
 const addProcess = (state = INITIAL_STATE, action) => {
-	return { ...state, process: action.payload };
+	return { ...state, process: [...state.process, action.payload] };
 };
 const addAlgorithm = (state = INITIAL_STATE, action) => {
 	return { ...state, algorithm: action.payload };
