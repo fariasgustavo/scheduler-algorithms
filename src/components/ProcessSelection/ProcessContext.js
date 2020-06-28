@@ -13,17 +13,23 @@ const ProcessContext = ({ visibility }) => {
 		await dispatch({
 			type: "ADD_PROCESS",
 			payload: {
-				time: processTime,
+				time: Number(processTime),
 			},
 		});
 
 		serProcessTime('');
 
-		if (processQty === process.length)
+		if (processQty === process.length){
 			dispatch({
 				type: "ADD_PROCESS_QTY",
 				payload: null,
 			});
+
+			dispatch({
+				type: "SHOW_SELECT_ALGORITHM",
+				payload: true
+			});
+		}
 	};
 
 	return (

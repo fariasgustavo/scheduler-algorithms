@@ -1,0 +1,5 @@
+.container-chart { width: 80%; margin: 0 auto; }
+.chart-item { height: 10px;}
+.chart-item-accumulated-time { border: 1px dotted; }
+.chart-item-process-time { background-color: black; }
+span { display: inline-block; height: 100%; }
