@@ -27,9 +27,23 @@ const Chart = ({ visibility }) => {
         });
         
         setFifoStructure(sjfStructure);
+    }, [process, setFifoStructure]);
+    
+    const setPriorityStructure = useCallback(() => {
+		const priorityStructure = process.sort((a, b) => {
+			return b.priority - a.priority;
+        });
+        
+        setFifoStructure(priorityStructure);
 	}, [process, setFifoStructure]);
 
-	const renderFifo = () => {
+	const setProportionProcessTimeInChart = (time) => {
+		if (time === 0) return 0;
+
+		return (time * 100) / 80;
+	};
+
+    const renderFifo = () => {
 		return (
 			<>
 				{chartItems.map((item, index) => (
@@ -48,12 +62,6 @@ const Chart = ({ visibility }) => {
 				))}
 			</>
 		);
-	};
-
-	const setProportionProcessTimeInChart = (time) => {
-		if (time === 0) return 0;
-
-		return (time * 100) / 80;
 	};
 
 	useEffect(() => {
