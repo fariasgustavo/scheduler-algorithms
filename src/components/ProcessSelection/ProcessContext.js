@@ -7,17 +7,20 @@ const ProcessContext = ({ visibility }) => {
 	const dispatch = useDispatch();
 	const processQty = useSelector((state) => state.scheduler.processQty);
 	const process = useSelector((state) => state.scheduler.process);
-	const [processTime, serProcessTime] = useState('');
+	const [processTime, setProcessTime] = useState('');
+	const [processPriority, setProcessPriority] = useState('');
 
 	const handleAddProcess = async () => {
 		await dispatch({
 			type: "ADD_PROCESS",
 			payload: {
 				time: Number(processTime),
+				priority: Number(processPriority)
 			},
 		});
 
-		serProcessTime('');
+		setProcessTime('');
+		setProcessPriority('');
 
 		if (processQty === process.length){
 			dispatch({
@@ -41,7 +44,14 @@ const ProcessContext = ({ visibility }) => {
 						max={80}
 						value={processTime}
 						onInput={(e) => {
-							serProcessTime(e.target.value);
+							setProcessTime(e.target.value);
+						}}
+					/>
+					<NumberInput
+						placeholder="Prioridade de execução do processo"
+						value={processPriority}
+						onInput={(e) => {
+							setProcessPriority(e.target.value);
 						}}
 					/>
 					<Button

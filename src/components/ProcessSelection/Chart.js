@@ -1,52 +1,68 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
 
 const Chart = ({ visibility }) => {
-    const [ chartItems, setChartItems ] = useState([]);
+	const [chartItems, setChartItems] = useState([]);
 	const process = useSelector((state) => state.scheduler.process);
 
-    useEffect(() => {
-        let accumulatedTime = 0;
-        const fifoStructure = process.map((item, index) => {
-            if(index > 0)
-                accumulatedTime += process[index - 1].time;
+	const setFifoStructure = useCallback((processList) => {
+		let accumulatedTime = 0;
 
-            return { time: setProportionProcessTimeInChart(item.time), accumulatedTime: setProportionProcessTimeInChart(accumulatedTime) };
-        })
+		const fifoStructure = processList.map((item, index) => {
+			if (index > 0) accumulatedTime += processList[index - 1].time;
 
-        setChartItems(fifoStructure);
-    }, [process, visibility]);
+			return {
+				time: setProportionProcessTimeInChart(item.time),
+				accumulatedTime: setProportionProcessTimeInChart(accumulatedTime),
+			};
+		});
 
-    const setProportionProcessTimeInChart = time => {
-        if(time === 0) return 0;
+		setChartItems(fifoStructure);
+	}, []);
 
-        return (time * 100) / 80;
-    }
-
-    const setFifoStructure = process => {
+	const setSjfStructure = useCallback(() => {
+		const sjfStructure = process.sort((a, b) => {
+			return a.time - b.time;
+        });
         
-    }
+        setFifoStructure(sjfStructure);
+	}, [process, setFifoStructure]);
 
 	const renderFifo = () => {
-        return (
+		return (
 			<>
 				{chartItems.map((item, index) => (
-					<div
-                        className="chart-item"
-                        key={index}
-					>
-                        {item.accumulatedTime > 0 && (
-                            <span className="chart-item-accumulated-time" style={{width: `${item.accumulatedTime}%`}}></span>
-                        )}   
-                        <span className="chart-item-process-time" style={{width: `${item.time}%`}}></span>
-                    </div>
+					<div className="chart-item" key={index}>
+						{item.accumulatedTime > 0 && (
+							<span
+								className="chart-item-accumulated-time"
+								style={{ width: `${item.accumulatedTime}%` }}
+							></span>
+						)}
+						<span
+							className="chart-item-process-time"
+							style={{ width: `${item.time}%` }}
+						></span>
+					</div>
 				))}
 			</>
 		);
 	};
 
-	return <>{visibility && <div className="container-chart">{renderFifo()}</div>}</>;
+	const setProportionProcessTimeInChart = (time) => {
+		if (time === 0) return 0;
+
+		return (time * 100) / 80;
+	};
+
+	useEffect(() => {
+		setSjfStructure();
+	}, [process, setSjfStructure, visibility]);
+
+	return (
+		<>{visibility && <div className="container-chart">{renderFifo()}</div>}</>
+	);
 };
 
 export default Chart;
