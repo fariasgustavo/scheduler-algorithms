@@ -12,13 +12,23 @@ const Chart = ({ visibility }) => {
             if(index > 0)
                 accumulatedTime += process[index - 1].time;
 
-            return { time: item.time, accumulatedTime };
+            return { time: setProportionProcessTimeInChart(item.time), accumulatedTime: setProportionProcessTimeInChart(accumulatedTime) };
         })
 
         setChartItems(fifoStructure);
     }, [process, visibility]);
 
-	const fifo = () => {
+    const setProportionProcessTimeInChart = time => {
+        if(time === 0) return 0;
+
+        return (time * 100) / 80;
+    }
+
+    const setFifoStructure = process => {
+        
+    }
+
+	const renderFifo = () => {
         return (
 			<>
 				{chartItems.map((item, index) => (
@@ -27,16 +37,16 @@ const Chart = ({ visibility }) => {
                         key={index}
 					>
                         {item.accumulatedTime > 0 && (
-                            <span className="chart-item-accumulated-time" style={{width: `${item.accumulatedTime}px`}}></span>
+                            <span className="chart-item-accumulated-time" style={{width: `${item.accumulatedTime}%`}}></span>
                         )}   
-                        <span className="chart-item-process-time" style={{width: `${item.time}px`}}></span>
+                        <span className="chart-item-process-time" style={{width: `${item.time}%`}}></span>
                     </div>
 				))}
 			</>
 		);
 	};
 
-	return <>{visibility && <div className="container-chart">{fifo()}</div>}</>;
+	return <>{visibility && <div className="container-chart">{renderFifo()}</div>}</>;
 };
 
 export default Chart;
