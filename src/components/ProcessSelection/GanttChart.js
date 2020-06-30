@@ -1,8 +1,26 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Chart from "react-apexcharts";
 import "./style.css";
 
-const Chart = ({ visibility }) => {
+const options = {
+	chart: {
+	  id: "horizontal-bar"
+	},
+	xaxis: {
+	  categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+	}
+  }
+
+const series = [
+	{
+	  name: "series-1",
+	  data: [30, 40, 45, 50, 49, 60, 70, 91]
+	}
+  ];
+
+
+const GanttChart = ({ visibility }) => {
 	const [chartItems, setChartItems] = useState([]);
 	const process = useSelector((state) => state.scheduler.process);
 
@@ -14,7 +32,8 @@ const Chart = ({ visibility }) => {
 
 			return {
 				time: setProportionProcessTimeInChart(item.time),
-				accumulatedTime: setProportionProcessTimeInChart(accumulatedTime),
+                accumulatedTime: setProportionProcessTimeInChart(accumulatedTime),
+                waitTime: setProportionProcessTimeInChart()
 			};
 		});
 
@@ -23,6 +42,10 @@ const Chart = ({ visibility }) => {
 
 	const setSjfStructure = useCallback(() => {
 		const sjfStructure = process.sort((a, b) => {
+			const wait = a.waitTime - b.waitTime;
+
+			if(wait !== 0) return wait;
+		
 			return a.time - b.time;
         });
         
@@ -65,12 +88,18 @@ const Chart = ({ visibility }) => {
 	};
 
 	useEffect(() => {
-		setSjfStructure();
 	}, [process, setSjfStructure, visibility]);
 
 	return (
-		<>{visibility && <div className="container-chart">{renderFifo()}</div>}</>
+		<>
+			{visibility && 
+			<Chart
+				options={ options }
+				type="stacked-bar"
+				series={ series }
+			/>
+		}</>
 	);
 };
 
-export default Chart;
+export default GanttChart;

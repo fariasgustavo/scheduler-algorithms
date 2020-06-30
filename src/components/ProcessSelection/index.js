@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProcessContext from "./ProcessContext";
 import SelectAlgotithm from "./SelectAlgorithm";
-import Chart from "./Chart";
+import Chart from "./ApexChart";
 
 const ProcessSelection = () => {
 	const processQty = useSelector((state) => state.scheduler.processQty);
@@ -13,7 +13,9 @@ const ProcessSelection = () => {
 		<div className="container-process">
 			<ProcessContext visibility={!!processQty} />
 			<SelectAlgotithm visibility={showSelectAlgorithm}/>
-			<Chart visibility={showChart}/>
+			{showChart && (
+				<Chart visibility={showChart}/>
+			)}	
 		</div>
 	);
 };

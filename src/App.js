@@ -11,7 +11,7 @@ const App = (props) => {
   const submitProcessQuantity = () => {
     dispatch({
       type: 'ADD_PROCESS_QTY',
-      payload: Number(processQuantityField),
+      payload: Number(processQuantityField) - 1,
     });
   }
 
