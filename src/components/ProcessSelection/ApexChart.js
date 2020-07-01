@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from "react-apexcharts";
 import { connect } from "react-redux";
-
+import './style.css';
 
 class ApexChart extends React.Component {
 	constructor(props) {
@@ -18,9 +18,33 @@ class ApexChart extends React.Component {
 	}
 
 	async componentDidMount() {
-		await this.priorities();
+		const { algorithm } = this.props;
+
+		const execAlgorithm = {
+			'sjf': this.sjf,
+			'fifo': this.fifo,
+			'priority': this.priorities 
+		}
+
+		await execAlgorithm[algorithm]();
 		this.setChartProps();
 	}
+
+	async componentDidUpdate(prevProps) {
+		const { algorithm } = this.props;
+		if(prevProps.algorithm !== algorithm){
+			const execAlgorithm = {
+				'sjf': this.sjf,
+				'fifo': this.fifo,
+				'priority': this.priorities 
+			}
+	
+			await execAlgorithm[algorithm]();
+			this.setChartProps();
+		}	
+
+	}
+
 
 	processSortedByWaitTime = processArray => {
 		return processArray.sort((a, b) => {
@@ -35,7 +59,7 @@ class ApexChart extends React.Component {
 
 			if(wait !== 0) return wait;
 		
-			return a.time - b.time;
+			return a.executiontime - b.executionTime;
 		});
 		let queueTimeArray = [];
 
@@ -92,11 +116,13 @@ class ApexChart extends React.Component {
         this.processSortedByWaitTime(process).map((item, index) => {
 			if(index === 0){
 				queueTimeArray.push(0);
-				return;
+				return false;
 			}
 
 			const timeInQueue = ((process[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + process[index - 1].executionTime;
 			queueTimeArray.push(timeInQueue);
+
+			return true;
 		});
 
 		const executionTimeArray = process.map(item => {
@@ -106,6 +132,8 @@ class ApexChart extends React.Component {
 		const waitTimeArray = process.map(item => {
 			return item.waitTime;
 		});
+
+		debugger;
 
 		await this.setState({
 			waitTime: waitTimeArray,
@@ -226,13 +254,16 @@ class ApexChart extends React.Component {
 	};
 
 	render() {
-		const { visibility } = this.props;
+		const { visibility, algorithm } = this.props;
 		const { options, series } = this.state;
+
+		console.log(series);
 
 		return(
 			<>
 			{visibility && (
 				<div id="chart">
+					<h2>Algorithm: {algorithm}</h2>
 					<Chart options={options} series={series} type="bar" height={350} />
 				</div>
 			)}
@@ -243,8 +274,9 @@ class ApexChart extends React.Component {
 
 
 const mapStateToProps = state => ({
-	process: state.scheduler.process
-  });
+	process: state.scheduler.process,
+	algorithm: state.scheduler.algorithm
+});
 
   export default connect(
 	mapStateToProps,

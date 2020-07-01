@@ -4,8 +4,6 @@ import './style.css';
 const NumberInput = (props) => {
 	const { placeholder, name, id, max, value, onInput } = props;
 
-	const handleOnChange = (value) => {};
-
 	return (
 		<input
 			type="number"

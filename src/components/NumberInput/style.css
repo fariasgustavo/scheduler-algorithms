@@ -6,3 +6,10 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
 	-moz-appearance: textfield;
 }
+
+input {
+	padding: 5px;
+    border: 1px solid #ccc;
+	color: #7d7d7d;
+	margin: 0 5px 15px;
+}

@@ -11,6 +11,8 @@ const ProcessContext = ({ visibility }) => {
 	const [processWaitTime, setProcessWaitTime] = useState("");
 	const [processPriority, setProcessPriority] = useState("");
 
+	let amountAccumulator = 0;
+
 	const handleAddProcess = async () => {
 		await dispatch({
 			type: "ADD_PROCESS",
@@ -25,6 +27,23 @@ const ProcessContext = ({ visibility }) => {
 		setProcessExecutionTime("");
 		setProcessWaitTime("");
 		setProcessPriority("");
+
+		if(process.length > 0){
+			process.map(async (item) => {
+				if(amountAccumulator === 0)
+					amountAccumulator += item.executionTime + Number(processExecutionTime);
+				else
+					amountAccumulator = amountAccumulator + Number(processExecutionTime);
+			});
+	
+			debugger;
+
+			if(amountAccumulator > 80){
+				alert('Limite máximo de 80 unidades de tempo para execução de todos os processos');
+				amountAccumulator -= Number(processExecutionTime);
+				return;
+			}
+		}
 
 		if (processQty === process.length) {
 			dispatch({
@@ -45,7 +64,7 @@ const ProcessContext = ({ visibility }) => {
 				<>
 					<div className="box-process">
 						<NumberInput
-							placeholder="Tempo de ingresso na fila de aptos"
+							placeholder="Tempo de ingresso na fila"
 							max={80}
 							value={processWaitTime}
 							onInput={(e) => {
@@ -61,7 +80,7 @@ const ProcessContext = ({ visibility }) => {
 							}}
 						/>
 						<NumberInput
-							placeholder="Prioridade de execução do processo"
+							placeholder="Prioridade de execução"
 							value={processPriority}
 							onInput={(e) => {
 								setProcessPriority(e.target.value);
