@@ -18,14 +18,12 @@ class ApexChart extends React.Component {
 	}
 
 	async componentDidMount() {
-		await this.fifo();
+		await this.priorities();
 		this.setChartProps();
 	}
 
-	processSortedByWaitTime = () => {
-		const { process } = this.props;
-
-		return process.sort((a, b) => {
+	processSortedByWaitTime = processArray => {
+		return processArray.sort((a, b) => {
 			return a.waitTime - b.waitTime;
         });
 	};
@@ -91,7 +89,7 @@ class ApexChart extends React.Component {
 		const { process } = this.props;
 
 		let queueTimeArray = [];
-        this.processSortedByWaitTime().map((item, index) => {
+        this.processSortedByWaitTime(process).map((item, index) => {
 			if(index === 0){
 				queueTimeArray.push(0);
 				return;
@@ -114,6 +112,44 @@ class ApexChart extends React.Component {
 			queueTime: queueTimeArray,
 			executionTime: executionTimeArray,
 			processArray: process
+		});
+	}
+
+	priorities = async () => {
+		const { process } = this.props;
+		let queueTimeArray = [];
+		const prioritiesStructure = process.sort((a, b) => {
+			const wait = a.waitTime - b.waitTime;
+
+			if(wait !== 0) return wait;
+		
+			return b.priority - a.priority;
+		});
+
+		const prioritiesTimeInQueue = prioritiesStructure.map((item, index) => {
+			if(index === 0){
+				queueTimeArray.push(0);
+				return { ...item, timeInQueue: 0 };
+			}
+
+			const timeInQueue = ((prioritiesStructure[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + prioritiesStructure[index - 1].executionTime;
+			queueTimeArray.push(timeInQueue);
+			return { ...item, timeInQueue };
+		});
+
+		const executionTimeArray = prioritiesTimeInQueue.map(item => {
+			return item.executionTime;
+		});
+
+		const waitTimeArray = prioritiesTimeInQueue.map(item => {
+			return item.waitTime;
+		});
+
+		await this.setState({
+			waitTime: waitTimeArray,
+			queueTime: queueTimeArray,
+			executionTime: executionTimeArray,
+			processArray: prioritiesTimeInQueue
 		});
 	}
 	

@@ -18,7 +18,7 @@ const ProcessContext = ({ visibility }) => {
 				executionTime: Number(processExecutionTime),
 				waitTime: Number(processWaitTime),
 				priority: Number(processPriority),
-				name: `Process ${process.length + 1}`
+				name: `Process ${process.length + 1} \n Priority: ${processPriority}`
 			},
 		});
 
