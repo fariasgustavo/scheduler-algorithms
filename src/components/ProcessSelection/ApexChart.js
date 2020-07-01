@@ -23,7 +23,7 @@ class ApexChart extends React.Component {
 		const execAlgorithm = {
 			'sjf': this.sjf,
 			'fifo': this.fifo,
-			'priority': this.priorities 
+			'priorities': this.priorities 
 		}
 
 		await execAlgorithm[algorithm]();
@@ -36,7 +36,7 @@ class ApexChart extends React.Component {
 			const execAlgorithm = {
 				'sjf': this.sjf,
 				'fifo': this.fifo,
-				'priority': this.priorities 
+				'priorities': this.priorities 
 			}
 	
 			await execAlgorithm[algorithm]();
@@ -63,20 +63,12 @@ class ApexChart extends React.Component {
 		});
 		let queueTimeArray = [];
 
+		const orderByExecutionTime = sjfStructure.sort((a, b) => {
+			const executionTimeLessThanWaitTime = a.executionTime - b.waitTime;
 
-		const sjfTimeInQueue = sjfStructure.map((item, index) => {
-			if(index === 0){
-				queueTimeArray.push(0);
-				return { ...item, timeInQueue: 0 };
-			}
+			if(executionTimeLessThanWaitTime !== 0) return executionTimeLessThanWaitTime;
 
-			const timeInQueue = ((process[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + process[index - 1].executionTime;
-			queueTimeArray.push(timeInQueue);
-			return { ...item, timeInQueue };
-		});
-
-		const orderByExecutionTime = sjfTimeInQueue.sort((a, b) => {
-			return a.waitTime - b.timeInQueue;
+			return a.executionTime - b.executionTime;
 		});
 
 		queueTimeArray = [];
@@ -87,17 +79,54 @@ class ApexChart extends React.Component {
 				return { ...item, timeInQueue: 0 };
 			}
 
-			const timeInQueue = ((orderByExecutionTime[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + orderByExecutionTime[index - 1].executionTime;
+			let timeInQueue = 0;
+
+			if((index - 1) === 0){
+				timeInQueue = item.waitTime + orderByExecutionTime[index - 1].executionTime;
+			}else{
+				timeInQueue = ((orderByExecutionTime[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + orderByExecutionTime[index - 1].executionTime;
+			}
+			
 			queueTimeArray.push(timeInQueue);
-		
+
 			return { ...item, timeInQueue };
 		});
 
-		const executionTimeArray = sjfTimeInQueueNew.map(item => {
+		const orderByQueueTime = sjfTimeInQueueNew.sort((a,b) => {
+			if(sjfTimeInQueueNew[0] === a || sjfTimeInQueueNew[0] === b) return 0;
+			return a.executionTime - b.executionTime;
+		})
+
+		queueTimeArray = []
+
+		const sjfTimeLast = orderByQueueTime.map((item, index) => {
+			if(index === 0){
+				queueTimeArray.push(0);
+				return { ...item, timeInQueue: 0 };
+			}
+
+			let timeInQueue = 0;
+
+			if((index - 1) === 0){
+				if(item.waitTime === orderByExecutionTime[index - 1].executionTime)
+					timeInQueue = 0;
+				else
+					timeInQueue = item.waitTime + orderByExecutionTime[index - 1].executionTime;
+
+			}else{
+				timeInQueue = ((orderByExecutionTime[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + orderByExecutionTime[index - 1].executionTime;
+			}
+			
+			queueTimeArray.push(timeInQueue);
+
+			return { ...item, timeInQueue };
+		});
+
+		const executionTimeArray = sjfTimeLast.map(item => {
 			return item.executionTime;
 		});
 
-		const waitTimeArray = sjfTimeInQueueNew.map(item => {
+		const waitTimeArray = sjfTimeLast.map(item => {
 			return item.waitTime;
 		});
 
@@ -105,7 +134,7 @@ class ApexChart extends React.Component {
 			waitTime: waitTimeArray,
 			queueTime: queueTimeArray,
 			executionTime: executionTimeArray,
-			processArray: sjfTimeInQueueNew
+			processArray: sjfTimeLast
 		});
 	}
 
@@ -133,8 +162,6 @@ class ApexChart extends React.Component {
 			return item.waitTime;
 		});
 
-		debugger;
-
 		await this.setState({
 			waitTime: waitTimeArray,
 			queueTime: queueTimeArray,
@@ -154,13 +181,19 @@ class ApexChart extends React.Component {
 			return b.priority - a.priority;
 		});
 
-		const prioritiesTimeInQueue = prioritiesStructure.map((item, index) => {
+		const orderByPriority = prioritiesStructure.sort((a, b) => {
+			return b.priority - a.priority;
+		});
+
+		queueTimeArray = [];
+
+		const prioritiesTimeInQueue = orderByPriority.map((item, index) => {
 			if(index === 0){
 				queueTimeArray.push(0);
 				return { ...item, timeInQueue: 0 };
 			}
 
-			const timeInQueue = ((prioritiesStructure[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + prioritiesStructure[index - 1].executionTime;
+			const timeInQueue = ((orderByPriority[index - 1].waitTime + queueTimeArray[queueTimeArray.length - 1]) - item.waitTime) + orderByPriority[index - 1].executionTime;
 			queueTimeArray.push(timeInQueue);
 			return { ...item, timeInQueue };
 		});

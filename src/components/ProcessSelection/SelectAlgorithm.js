@@ -21,6 +21,7 @@ const SelectAlgorithm = ({ visibility }) => {
 		<>
 			{visibility && (
 				<select onChange={handleOnChange}>
+					<option value="">Select an algorithm</option>
 					<option value="fifo">FIFO</option>
 					<option value="sjf">SJF</option>
 					<option value="priorities">Prioridades</option>
